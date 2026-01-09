@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Dashboard | State Management Demo</title>
+    <style>
+
+        :root { --primary: #2563eb; --danger: #dc2626; --bg: #f3f4f6; --card: #ffffff; }
+        
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        
+        .app-container { background: var(--card); width: 100%; max-width: 400px; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        
+        h1, h2 { margin-top: 0; color: #111827; }
+        p { color: #6b7280; font-size: 0.9rem; }
+        
+        input { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+        
+        button { width: 100%; padding: 0.75rem; background-color: var(--primary); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        button.logout { background-color: var(--danger); margin-top: 1rem; }
+        
+        .hidden { display: none !important; }
+        
+        .balance-card { background: #eff6ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; }
+        .balance-amount { font-size: 2.5rem; font-weight: 700; color: var(--primary); margin: 0.5rem 0; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div id="view-login">
+        <h2>Welcome Back</h2>
+        <p>Enter your credentials to access the secure dashboard.</p>
+        
+        <form id="login-form">
+            <input type="text" value="demo_user" readonly style="background: #f9fafb; color: #9ca3af;">
+            <input type="password" value="password123" readonly style="background: #f9fafb; color: #9ca3af;">
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+
+    <div id="view-dashboard" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2>My Account</h2>
+            <span style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">● Active</span>
+        </div>
+
+        <div class="balance-card">
+            <p>Total Balance</p>
+            <div class="balance-amount">€4,250.00</div>
+        </div>
+
+        <p><strong>Recent Activity</strong></p>
+        <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>Uber Ride</span>
+                <span style="color: #dc2626;">- €12.50</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Upwork Payment</span>
+                <span style="color: #059669;">+ €350.00</span>
+            </div>
+        </div>
+
+        <button id="btn-logout" class="logout">Sign Out</button>
+    </div>
+
+</div>
+
+<script>
+
+    const loginView = document.getElementById('view-login');
+    const dashboardView = document.getElementById('view-dashboard');
+    const loginForm = document.getElementById('login-form');
+    const logoutBtn = document.getElementById('btn-logout');
+
+    const AppState = {
+        isAuthenticated: false,
+        
+        updateUI: function() {
+            if (this.isAuthenticated) {
+                loginView.classList.add('hidden');
+                dashboardView.classList.remove('hidden');
+            } else {
+                dashboardView.classList.add('hidden');
+                loginView.classList.remove('hidden');
+            }
+        },
+
+        login: function() {
+            this.isAuthenticated = true;
+            this.updateUI();
+            console.log("State Change: User Logged In");
+        },
+
+        logout: function() {
+            this.isAuthenticated = false;
+            this.updateUI();
+            console.log("State Change: User Logged Out");
+        }
+    };
+
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault(); 
+        
+        
+        const btn = loginForm.querySelector('button');
+        const originalText = btn.innerText;
+        btn.innerText = "Verifying...";
+        btn.style.opacity = "0.7";
+
+        setTimeout(() => {
+            AppState.login();
+            btn.innerText = originalText;
+            btn.style.opacity = "1";
+        }, 800);
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        AppState.logout();
+    });
+</script>
+
+</body>
+</html>
